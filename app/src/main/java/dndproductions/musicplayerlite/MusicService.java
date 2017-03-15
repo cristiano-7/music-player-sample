@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.content.ContentUris;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -33,6 +32,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     // Int field used for keeping track with the current position.
     private int mSongPosition;
+
+    // Initialization used to assist with the binding process.
+    private final IBinder mMusicBinder = new MusicBinder();
 
     @Override
     public void onCreate(){
@@ -79,11 +81,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
-        return null;
+        return mMusicBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent){
+
+        // Releases MediaPlayer resources when the Service is unbound (e.g. user exiting app).
+        mPlayer.stop();
+        mPlayer.release();
+        return false;
     }
 
     @Override
