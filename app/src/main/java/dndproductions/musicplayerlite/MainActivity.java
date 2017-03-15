@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // The following code either executes for versions older than M, or until the user
-        // accepts the in-app permission for the next sessions.
+        // The following code either executes for versions older than M, or until the user accepts
+        // the in-app permission for the next sessions.
         init();
 
         // Invokes the iteration for adding songs.
@@ -100,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Displays a permission dialog when requested for devices M and above.
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
         if (requestCode == PERMISSION_CODE) {
 
             // User accepts the permission(s).
@@ -120,8 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 // Custom adapter instantiation that displays the songs via the ListView.
                 SongAdapter songAdapter = new SongAdapter(this, mSongList);
                 mSongView.setAdapter(songAdapter);
+
+                // Manually passes the song list since the ServiceConnection instance was binded
+                // before the song list was formed.
+                mMusicService.setList(mSongList);
             } else { // User denies the permission.
-                Toast.makeText(this, "Please grant the permissions for Music Player 2.0 and come" +
+                Toast.makeText(this, "Please grant the permissions for Music Player Lite and come" +
                         " back again soon!", Toast.LENGTH_SHORT).show();
 
                 // Runs a thread for a slight delay prior to shutting down the app.
@@ -153,9 +158,10 @@ public class MainActivity extends AppCompatActivity {
         mSongView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Song song = mSongList.get(position);
-                Log.d(LOG_TAG, song.getTitle());
-                Log.d(LOG_TAG, song.getArtist());
+
+                // Sets the respective song in the Service, and then plays it.
+                mMusicService.setSong(position);
+                mMusicService.playSong();
             }
         });
     }
@@ -165,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicBinder binder = (MusicBinder)service;
+            MusicBinder binder = (MusicBinder) service;
 
             // Gets service.
             mMusicService = binder.getService();

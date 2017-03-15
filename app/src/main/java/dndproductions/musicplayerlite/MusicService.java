@@ -52,7 +52,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mPlayer = new MediaPlayer();
 
         // Allows playback to continue when the device becomes idle.
-        mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        //mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 
         // Sets the stream type to music.
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -70,6 +70,15 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
      */
     public void setList(List<Song> songs){
         mSongList = songs;
+    }
+
+    /**
+     * Setter method for retrieving the respective song's position/index from the Activity.
+     *
+     * @param position is the position/index of the song being played.
+     */
+    public void setSong(int position){
+        mSongPosition = position;
     }
 
     /**
@@ -95,9 +104,36 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return false;
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
+    /**
+     * Plays a song from the song list.
+     */
+    public void playSong(){
+        mPlayer.reset(); // Used also when the user plays songs progressively.
 
+        // Retrieves the respective song.
+        Song song = mSongList.get(mSongPosition);
+
+        // Retrieves the song's ID.
+        long currentSong = song.getID();
+
+        // Sets up the URI.
+        Uri trackUri = ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                currentSong);
+
+        // Tries setting up the URI as the data source for the MediaPlayer.
+        try {
+            mPlayer.setDataSource(getApplicationContext(), trackUri);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error setting data source.", e);
+        }
+
+        mPlayer.prepareAsync(); // Prepares its asynchronous task.
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mediaPlayer.start(); // Begins playback.
     }
 
     @Override
@@ -106,7 +142,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
+    public void onCompletion(MediaPlayer mediaPlayer) {
 
     }
 }
