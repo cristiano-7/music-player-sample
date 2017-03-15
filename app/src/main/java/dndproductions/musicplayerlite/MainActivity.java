@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.view.View;
@@ -96,6 +97,30 @@ public class MainActivity extends AppCompatActivity {
             bindService(mPlayIntent, mMusicConnection, Context.BIND_AUTO_CREATE);
             startService(mPlayIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.song_options, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Performs the following for the respective item.
+        switch (item.getItemId()) {
+            case R.id.option_shuffle:
+                // TODO: Add shuffle functionality here.
+                break;
+            case R.id.option_end: // TEMPORARY
+                stopService(mPlayIntent);
+                mMusicService = null;
+                System.exit(0);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     // Displays a permission dialog when requested for devices M and above.
