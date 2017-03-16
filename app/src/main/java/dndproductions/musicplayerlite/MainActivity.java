@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Instantiates the Intent if it doesn't exist yet, binds to it, and then starts it.
         if (mPlayIntent == null) {
+            Log.d(LOG_TAG, "Binding and starting service");
+
             mPlayIntent = new Intent(this, MusicService.class);
             bindService(mPlayIntent, mMusicConnection, Context.BIND_AUTO_CREATE);
             startService(mPlayIntent);
@@ -196,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(LOG_TAG, "onServiceConnected()");
+
             MusicBinder binder = (MusicBinder) service;
 
             // Gets service.
@@ -210,6 +214,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.d(LOG_TAG, "onServiceDisconnected()");
+
             mMusicBound = false;
         }
     };

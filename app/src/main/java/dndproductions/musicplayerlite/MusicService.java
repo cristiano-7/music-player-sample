@@ -97,6 +97,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onUnbind(Intent intent){
+        Log.d(LOG_TAG, "onUnbind()");
 
         // Releases MediaPlayer resources when the Service is unbound (e.g. user exiting app).
         mPlayer.stop();
