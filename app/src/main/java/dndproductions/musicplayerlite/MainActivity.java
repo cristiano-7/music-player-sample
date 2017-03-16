@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playPrev();
+                playPrevious();
             }
         });
 
@@ -254,6 +254,22 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         mController.setMediaPlayer(this);
         mController.setAnchorView(findViewById(R.id.song_list));
         mController.setEnabled(true);
+    }
+
+    /**
+     * Plays the next song via the Service class.
+     */
+    private void playNext(){
+        mMusicService.playNext();
+        mController.show(0);
+    }
+
+    /**
+     * Plays the previous song via the Service class.
+     */
+    private void playPrevious(){
+        mMusicService.playPrevious();
+        mController.show(0);
     }
 
     // Helper method used for retrieving audio file information.
@@ -288,33 +304,44 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         }
     }
 
+    // The following are MediaPlayerControl interface methods.
     @Override
     public void start() {
-
+        mMusicService.go();
     }
 
     @Override
     public void pause() {
-
+        mMusicService.pausePlayer();
     }
 
     @Override
     public int getDuration() {
-        return 0;
+        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
+            return mMusicService.getDuration();
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public int getCurrentPosition() {
-        return 0;
+        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
+            return mMusicService.getPosition();
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public void seekTo(int i) {
-
+    public void seekTo(int position) {
+        mMusicService.seek(position);
     }
 
     @Override
     public boolean isPlaying() {
+        if (mMusicService != null && mMusicBound) return mMusicService.isPlaying();
+
         return false;
     }
 
@@ -325,17 +352,17 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
 
     @Override
     public boolean canPause() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canSeekBackward() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canSeekForward() {
-        return false;
+        return true;
     }
 
     @Override

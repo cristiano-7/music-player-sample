@@ -146,4 +146,48 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCompletion(MediaPlayer mediaPlayer) {
 
     }
+
+    // The following methods all apply to standard playback control functions that the user will
+    // expect.
+    public int getPosition(){
+        return mPlayer.getCurrentPosition();
+    }
+
+    public int getDuration(){
+        return mPlayer.getDuration();
+    }
+
+    public boolean isPlaying(){
+        return mPlayer.isPlaying();
+    }
+
+    public void pausePlayer(){
+        mPlayer.pause();
+    }
+
+    public void seek(int position){
+        mPlayer.seekTo(position);
+    }
+
+    public void go(){
+        mPlayer.start();
+    }
+
+    /**
+     * Runs the following code for when the previous song is played.
+     */
+    public void playPrevious(){
+        mSongPosition--;
+        if (mSongPosition < 0) mSongPosition = mSongList.size() - 1;
+        playSong();
+    }
+
+    /**
+     * Runs the following code for when the next song is played.
+     */
+    public void playNext(){
+        mSongPosition++;
+        if (mSongPosition >= mSongList.size()) mSongPosition = 0;
+        playSong();
+    }
 }
