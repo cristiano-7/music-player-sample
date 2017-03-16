@@ -100,8 +100,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Log.d(LOG_TAG, "onUnbind()");
 
         // Releases MediaPlayer resources when the Service is unbound (e.g. user exiting app).
-        mPlayer.stop();
-        mPlayer.release();
+        //mPlayer.stop();
+        //mPlayer.release();
         return false;
     }
 
