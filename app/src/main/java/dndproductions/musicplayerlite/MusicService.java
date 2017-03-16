@@ -159,12 +159,17 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        mediaPlayer.reset(); // Is this enough to constitute?
         return false;
     }
 
+    // Invoked when a song is complete.
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        if (mPlayer.getCurrentPosition() > 0){
+            mediaPlayer.reset();
+            playNext();
+        }
     }
 
     // The following methods all apply to standard playback control functions that the user will
