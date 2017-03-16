@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.MediaController.MediaPlayerControl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ import dndproductions.musicplayerlite.MusicService.MusicBinder;
  * Music player app that initially retrieves the user's songs from their music library, and then
  * provides playback functionality.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MediaPlayerControl {
 
     // Log tag constant.
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private MusicService mMusicService;
     private Intent mPlayIntent;
     private boolean mMusicBound = false;
+
+    // Field used for setting the controller up.
+    private MusicController mController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         // Custom adapter instantiation that displays the songs via the ListView.
         SongAdapter songAdapter = new SongAdapter(this, mSongList);
         mSongView.setAdapter(songAdapter);
+
+        // Invokes the controller setup.
+        setController();
     }
 
     @Override
@@ -152,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
                 // Manually passes the song list since the ServiceConnection instance was binded
                 // before the song list was formed.
                 mMusicService.setList(mSongList);
+
+                // Invokes the controller setup.
+                setController();
             } else { // User denies the permission.
                 Toast.makeText(this, "Please grant the permissions for Music Player Lite and come" +
                         " back again soon!", Toast.LENGTH_SHORT).show();
@@ -220,6 +230,32 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Sets the controller up.
+     */
+    private void setController() {
+        mController = new MusicController(this);
+
+        // Addresses when the user presses the previous/next buttons.
+        mController.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+
+        // Sets the controller to work on media playback in the app, with its anchor view referring
+        // to the song list.
+        mController.setMediaPlayer(this);
+        mController.setAnchorView(findViewById(R.id.song_list));
+        mController.setEnabled(true);
+    }
+
     // Helper method used for retrieving audio file information.
     public void getSongList() {
         ContentResolver musicResolver = getContentResolver();
@@ -250,5 +286,60 @@ public class MainActivity extends AppCompatActivity {
             }
             while (musicCursor.moveToNext());
         }
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return 0;
+    }
+
+    @Override
+    public void seekTo(int i) {
+
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return false;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
     }
 }
