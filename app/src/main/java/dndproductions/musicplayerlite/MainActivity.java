@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         // Performs the following for the respective item.
         switch (item.getItemId()) {
             case R.id.option_shuffle:
-                // TODO: Add shuffle functionality here.
+                mMusicService.setShuffle();
                 break;
             case R.id.option_end: // TEMPORARY
                 stopService(mPlayIntent);

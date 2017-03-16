@@ -11,8 +11,10 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * A subclass of {@link Service} that assists with executing music playback continuously even when
@@ -36,6 +38,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     // Initialization used to assist with the binding process.
     private final IBinder mMusicBinder = new MusicBinder();
 
+    // Fields used for implementing shuffle functionality.
+    private boolean mShuffle;
+    private Random mRandom;
+
     @Override
     public void onCreate(){
         super.onCreate();
@@ -43,6 +49,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         // Initializations.
         mSongPosition = 0;
         initMusicPlayer();
+        mRandom = new Random();
     }
 
     /**
@@ -79,6 +86,19 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
      */
     public void setSong(int position){
         mSongPosition = position;
+    }
+
+    /**
+     * Setter/toggler method for the shuffle functionality.
+     */
+    public void setShuffle(){
+        if (mShuffle) {
+            Toast.makeText(this, "Shuffle OFF", Toast.LENGTH_SHORT).show();
+            mShuffle = false;
+        } else {
+            Toast.makeText(this, "Shuffle ON", Toast.LENGTH_SHORT).show();
+            mShuffle = true;
+        }
     }
 
     /**
@@ -183,11 +203,21 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     /**
-     * Runs the following code for when the next song is played.
+     * Runs the following code for when the next song is played. Shuffles by retrieving a random
+     * song from the list should the boolean flag be true.
      */
     public void playNext(){
-        mSongPosition++;
-        if (mSongPosition >= mSongList.size()) mSongPosition = 0;
+        if (mShuffle){
+            int newSong = mSongPosition;
+            while (newSong == mSongPosition){ // Loops until false so guaranteed random
+                newSong = mRandom.nextInt(mSongList.size());
+            }
+            mSongPosition = newSong;
+        } else {
+            mSongPosition++;
+            if (mSongPosition >= mSongList.size()) mSongPosition = 0;
+        }
+
         playSong();
     }
 }
