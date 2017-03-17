@@ -156,6 +156,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mediaPlayer) {
         Log.d(LOG_TAG, "onPrepared()");
         mediaPlayer.start(); // Begins playback
+        MainActivity.showController(); // Updates the controller, accordingly
     }
 
     @Override

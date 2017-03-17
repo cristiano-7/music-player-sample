@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     private boolean mMusicBound = false;
 
     // Field used for setting the controller up.
-    private MusicController mController;
+    private static MusicController mController;
 
     // Boolean flags used for when the user leaves the app or when playback is paused, respectively.
     private boolean mPaused = false, mPlaybackPaused = false;
@@ -232,9 +232,16 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
                     mPlaybackPaused = false;
                 }
 
-                mController.show(0);
+                //mController.show(0);
             }
         });
+    }
+
+    /**
+     * Shows the controller accordingly.
+     */
+    public static void showController() {
+        mController.show(0);
     }
 
     // Connects to the service to bind the interaction between the Service class and the Activity.
