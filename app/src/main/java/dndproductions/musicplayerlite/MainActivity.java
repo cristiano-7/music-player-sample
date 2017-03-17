@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         mSongView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.d(LOG_TAG, "Song item clicked");
 
                 // Sets the respective song in the Service, and then plays it.
                 mMusicService.setSong(position);
@@ -267,6 +268,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
      * Sets the controller up.
      */
     private void setController() {
+        Log.d(LOG_TAG, "setController()");
+
         mController = new MusicController(this);
 
         // Addresses when the user presses the previous/next buttons.
@@ -356,18 +359,26 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     // The following are MediaPlayerControl interface methods.
     @Override
     public void start() {
+        Log.d(LOG_TAG, "start()");
+
         mMusicService.go();
     }
 
     @Override
     public void pause() {
+        Log.d(LOG_TAG, "pause()");
+
         mPlaybackPaused = true;
         mMusicService.pausePlayer();
     }
 
     @Override
     public int getDuration() {
+        Log.d(LOG_TAG, "getDuration()");
+
         if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
+            Log.d(LOG_TAG, "Getting duration");
+
             return mMusicService.getDuration();
         } else {
             return 0;

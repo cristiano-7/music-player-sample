@@ -154,7 +154,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        mediaPlayer.start(); // Begins playback.
+        Log.d(LOG_TAG, "onPrepared()");
+        mediaPlayer.start(); // Begins playback
     }
 
     @Override
