@@ -368,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     public void start() {
         Log.d(LOG_TAG, "start()");
 
-        mMusicService.go();
+        mMusicService.go(); // Executes when the user resumes the paused song
     }
 
     @Override
@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         Log.d(LOG_TAG, "pause()");
 
         mPlaybackPaused = true;
-        mMusicService.pausePlayer();
+        mMusicService.pausePlayer(); // Executes when the user pauses the current song
     }
 
     @Override
