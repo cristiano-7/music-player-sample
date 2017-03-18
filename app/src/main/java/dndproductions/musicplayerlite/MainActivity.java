@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
 
         // Instantiates the Intent if it doesn't exist yet, binds to it, and then starts it.
         if (mPlayIntent == null) {
-            Log.d(LOG_TAG, "Binding and starting service");
+            Log.d(LOG_TAG, "onStart(): Binding and starting service");
 
             mPlayIntent = new Intent(this, MusicService.class);
             bindService(mPlayIntent, mMusicConnection, Context.BIND_AUTO_CREATE);
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         }
     }
 
-    @Override
+    /*@Override
     protected void onPause(){
         super.onPause();
         mPaused = true;
@@ -124,10 +124,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
             setController();
             mPaused = false;
         }
-    }
+    }*/
 
     @Override
     protected void onStop() {
+        Log.d(LOG_TAG, "onStop(): Hide controller");
         mController.hide();
         super.onStop();
     }
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
                 // Used to address when the user interacts with the controls while playback is
                 // paused since the MediaPlayer object may behave strangely.
                 if (mPlaybackPaused){
-                    setController();
+                    //setController();
                     mPlaybackPaused = false;
                 }
 
@@ -241,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
      * Shows the controller accordingly.
      */
     public static void showController() {
+        Log.d(LOG_TAG, "showController()");
+
         mController.show(0);
     }
 
@@ -386,7 +389,15 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     public int getDuration() {
         Log.d(LOG_TAG, "getDuration()");
 
-        return mMusicService.getDuration();
+        // Returns the song's current duration as it is currently playing. Otherwise, returns 0
+        // with the exception of it being paused (so return its duration).
+        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
+            return mMusicService.getDuration();
+        } else {
+            if (mPlaybackPaused) return mMusicService.getDuration();
+
+            return 0;
+        }
     }
 
     /**
@@ -396,7 +407,15 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     public int getCurrentPosition() {
         Log.d(LOG_TAG, "getCurrentPosition()");
 
-        return mMusicService.getPosition();
+        // Returns the song's current position as it is currently playing. Otherwise, returns 0
+        // with the exception of it being paused (so return its position).
+        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
+            return mMusicService.getPosition();
+        } else {
+            if (mPlaybackPaused) return mMusicService.getPosition();
+
+            return 0;
+        }
     }
 
     @Override
