@@ -379,26 +379,24 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         mMusicService.pausePlayer(); // Executes when the user pauses the current song
     }
 
+    /**
+     * Getter interface method for the song's total length.
+     */
     @Override
     public int getDuration() {
         Log.d(LOG_TAG, "getDuration()");
 
-        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
-            Log.d(LOG_TAG, "Getting duration");
-
-            return mMusicService.getDuration();
-        } else {
-            return 0;
-        }
+        return mMusicService.getDuration();
     }
 
+    /**
+     * Getter interface method for the song's current position at the minute-mark.
+     */
     @Override
     public int getCurrentPosition() {
-        if (mMusicService != null && mMusicBound && mMusicService.isPlaying()) {
-            return mMusicService.getPosition();
-        } else {
-            return 0;
-        }
+        Log.d(LOG_TAG, "getCurrentPosition()");
+
+        return mMusicService.getPosition();
     }
 
     @Override
