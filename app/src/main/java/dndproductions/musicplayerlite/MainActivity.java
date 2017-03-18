@@ -55,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     // Field used for setting the controller up.
     private static MusicController mController;
 
-    // Boolean flags used for when the user leaves the app or when playback is paused, respectively.
-    private boolean mPaused = false, mPlaybackPaused = false;
+    // Boolean flag that's used to address when the user interacts with the controls while playback
+    // is paused since the MediaPlayer object may behave strangely.
+    private boolean mPlaybackPaused = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,25 +112,12 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
         }
     }
 
-    /*@Override
-    protected void onPause(){
-        super.onPause();
-        mPaused = true;
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if (mPaused){
-            setController();
-            mPaused = false;
-        }
-    }*/
-
     @Override
     protected void onStop() {
         Log.d(LOG_TAG, "onStop(): Hide controller");
-        mController.hide();
+
+        mController.hide(); // Hides the controller prior to the app being minimized
+
         super.onStop();
     }
 
@@ -147,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
             case R.id.option_shuffle:
                 mMusicService.setShuffle();
                 break;
-            case R.id.option_end: // TEMPORARY
+            case R.id.option_end:
                 stopService(mPlayIntent);
                 mMusicService = null;
                 System.exit(0);
@@ -226,14 +214,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
                 mMusicService.setSong(position);
                 mMusicService.playSong();
 
-                // Used to address when the user interacts with the controls while playback is
-                // paused since the MediaPlayer object may behave strangely.
-                if (mPlaybackPaused){
-                    //setController();
-                    mPlaybackPaused = false;
-                }
-
-                //mController.show(0);
+                // Sets the flag to false for the controller's duration and position purposes.
+                if (mPlaybackPaused) mPlaybackPaused = false;
             }
         });
     }
@@ -308,14 +290,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     private void playNext(){
         mMusicService.playNext();
 
-        // Used to address when the user interacts with the controls while playback is paused since
-        // the MediaPlayer object may behave strangely.
-        if (mPlaybackPaused){
-            setController();
-            mPlaybackPaused = false;
-        }
-
-        mController.show(0);
+        // Sets the flag to false for the controller's duration and position purposes.
+        if (mPlaybackPaused) mPlaybackPaused = false;
     }
 
     /**
@@ -324,14 +300,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     private void playPrevious(){
         mMusicService.playPrevious();
 
-        // Used to address when the user interacts with the controls while playback is paused since
-        // the MediaPlayer object may behave strangely.
-        if (mPlaybackPaused){
-            setController();
-            mPlaybackPaused = false;
-        }
-
-        mController.show(0);
+        // Sets the flag to false for the controller's duration and position purposes.
+        if (mPlaybackPaused) mPlaybackPaused = false;
     }
 
     // Helper method used for retrieving audio file information.

@@ -58,9 +58,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void initMusicPlayer(){
         mPlayer = new MediaPlayer();
 
-        // Allows playback to continue when the device becomes idle.
-        //mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-
         // Sets the stream type to music.
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -119,9 +116,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public boolean onUnbind(Intent intent){
         Log.d(LOG_TAG, "onUnbind()");
 
-        // Releases MediaPlayer resources when the Service is unbound (e.g. user exiting app).
-        //mPlayer.stop();
-        //mPlayer.release();
+        // Releases MediaPlayer resources when the Service is unbound (e.g. user closing app).
+        mPlayer.stop();
+        mPlayer.release();
         return false;
     }
 
@@ -155,13 +152,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         Log.d(LOG_TAG, "onPrepared()");
+
         mediaPlayer.start(); // Begins playback
-        MainActivity.showController(); // Updates the controller, accordingly
+
+        MainActivity.showController(); // Updates the controller accordingly
     }
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        mediaPlayer.reset(); // Is this enough to constitute?
+        Log.d(LOG_TAG, "onError()");
+
+        mediaPlayer.reset();
+
         return false;
     }
 
